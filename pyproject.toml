@@ -70,11 +70,11 @@ include = [
 ]
 
 [tool.black]
-line-length = 100
+line-length = 88  # personal preference: use black's default line length instead of 100
 target-version = ["py39", "py310", "py311", "py312"]
 
 [tool.ruff]
-line-length = 100
+line-length = 88  # keep consistent with black
 target-version = "py39"
 
 [tool.ruff.lint]
