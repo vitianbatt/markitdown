@@ -1,0 +1,107 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "markitdown"
+version = "0.1.0"
+description = "A utility tool for converting various file formats to Markdown"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [
+    { name = "Fork maintainers" }
+]
+keywords = ["markdown", "conversion", "document", "text"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Text Processing :: Markup :: Markdown",
+]
+dependencies = [
+    "beautifulsoup4>=4.11.0",
+    "requests>=2.28.0",
+    "chardet>=5.0.0",
+    "html2text>=2020.1.16",
+    "pdfminer.six>=20221105",
+    "python-docx>=0.8.11",
+    "openpyxl>=3.0.10",
+    "python-pptx>=0.6.21",
+    "mammoth>=1.6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "ruff>=0.1.0",
+    "pre-commit>=3.0",
+    "mypy>=1.0",
+]
+audio = [
+    "SpeechRecognition>=3.10.0",
+    "pydub>=0.25.1",
+]
+
+[project.scripts]
+markitdown = "markitdown.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/your-org/markitdown"
+Repository = "https://github.com/your-org/markitdown"
+Issues = "https://github.com/your-org/markitdown/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/markitdown"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/README.md",
+    "/LICENSE",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--cov=src/markitdown --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["src/markitdown"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
