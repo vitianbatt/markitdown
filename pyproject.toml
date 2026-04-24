@@ -93,7 +93,7 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 # removed --cov flags so a plain `pytest` run doesn't require pytest-cov installed
-addopts = "-v"
+addopts = "-v -x"  # added -x (fail fast) so test runs stop on first failure during local dev
 
 [tool.coverage.run]
 source = ["src/markitdown"]
