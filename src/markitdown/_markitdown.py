@@ -105,52 +105,22 @@ class MarkItDown:
         path: Path,
         **kwargs,
     ) -> DocumentConverterResult:
-        """Convert a local file to Markdown."""
+        """Convert a local file to Markdown.
+
+        Iterates through registered converters and returns the result
+        from the first one that accepts the given file. Falls back to
+        PlainTextConverter for unknown types.
+        """
+        # Resolve MIME type from file extension; default to plain text
+        # if mimetypes can't figure it out (e.g. uncommon extensions).
         mime_type, _ = mimetypes.guess_type(str(path))
-        extension = path.suffix.lower()
+        if mime_type is None:
+            mime_type = "text/plain"
 
-        with open(path, "rb") as fh:
+        with open(path, "rb") as f:
             for converter in self._converters:
-                result = converter.convert(
-                    fh,
-                    file_extension=extension,
-                    mime_type=mime_type,
-                    mlm_client=self._mlm_client,
-                    mlm_model=self._mlm_model,
-                    **kwargs,
-                )
+                result = converter.convert(path, mime_type, f, **kwargs)
                 if result is not None:
                     return result
 
-        raise ValueError(
-            f"No converter available for file: {path} "
-            f"(mime={mime_type}, ext={extension})"
-        )
-
-    def _convert_url(
-        self,
-        url: str,
-        **kwargs,
-    ) -> DocumentConverterResult:
-        """Fetch a URL and convert its content to Markdown."""
-        import urllib.request
-
-        with urllib.request.urlopen(url) as response:  # noqa: S310
-            content_type = response.headers.get_content_type()
-            mime_type = content_type.split(";")[0].strip() if content_type else None
-            extension = os.path.splitext(url.split("?")[0])[1].lower()
-
-            for converter in self._converters:
-                result = converter.convert(
-                    response,
-                    file_extension=extension,
-                    mime_type=mime_type,
-                    url=url,
-                    mlm_client=self._mlm_client,
-                    mlm_model=self._mlm_model,
-                    **kwargs,
-                )
-                if result is not None:
-                    return result
-
-        raise ValueError(f"No converter available for URL: {url} (mime={mime_type})")
+        raise ValueError(f"No converter found for file: {path}")
